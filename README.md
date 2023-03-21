@@ -1,5 +1,5 @@
 # NGramsSegmentation
 
-手撸n-gram实现中文分词
+realize Chinese segementation with n-grams
 
-简化了candidates更新算法以加快运行速度
+the selecting candidates part is optimized for faster training speed.
