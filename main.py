@@ -21,10 +21,12 @@ def testNGram(path):
     startTime = time.perf_counter()
     nGram = NGram()
     # text = splitText(readText(path, 1000))
-    oneText = splitText('秦睿洋是朱瑞麒的儿子')
+    oneText = splitText('风花雪月比喻辞藻堆砌，内容贫乏空洞')
     # nGram.train(text, "n_gram")
-    modelPath = 'model\model-1000lines-18443can-2304s.weights'
+    modelPath = 'model/model-1000lines-18443can-2304s.weights'
+    idiomPath = 'dataset/myIdioms.txt'
     nGram.loadModel(modelPath)
+    nGram.loadIdioms(idiomPath)
     print(nGram.predict(oneText))
     endTime = time.perf_counter()
     RunTime = endTime - startTime

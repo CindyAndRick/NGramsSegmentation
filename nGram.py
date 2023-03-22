@@ -1,11 +1,13 @@
 from trie import Trie
 from datetime import datetime
+import re
 
 class NGram:
     def __init__(self, n=7):
         self.n = n
         self.trie = Trie()
         self.candidates = []
+        self.idioms = []
 
     # type: "n_gram": 原本算法, "one_time": 改进算法
     def train(self, sentences, type="one_time", save=True):
@@ -139,10 +141,18 @@ class NGram:
             count += 1
             if count % 10000 == 0:
                 print("{}/{}".format(count, len(sentences)))
-            # 将sentence中的n-gram替换为" "
+            # 首先寻找句子中有没有成语，若有，则进行分割。同时在成语中加入符号，避免在后面步骤中被分割
+            for idiom in self.idioms:
+                if idiom in sentence:
+                    tmp = '-'.join(re.compile('.{1}').findall(idiom))
+                    sentence = sentence.replace(idiom, " -" + idiom + "- ")
+            # 随后用candidates进行第二轮分割
+            # 在sentence中的n-gram两侧加" "
             for candidate in self.candidates:
                 if candidate["str"] in sentence:
                     sentence = sentence.replace(candidate["str"], " " + candidate["str"] + " ")
+            # 删除先前为了保证成语不被分割而加入的符号
+            sentence = sentence.replace("-", "")
             # 将sentence按照" "分割
             tmp = sentence.split()
             res.extend(tmp)
@@ -159,4 +169,11 @@ class NGram:
             for line in f.readlines():
                 line = line.strip()
                 self.candidates.append({'str': line.split()[0], 'count': int(line.split()[1])})
+            f.close()
+
+    # 载入成语，并将出现次数置为最大值。表明成语在出现时应当被保留
+    def loadIdioms(self, path):
+        with open(path, 'r', encoding='utf-8') as f:
+            for line in f.readlines():
+                self.idioms.append(line.strip())
             f.close()
