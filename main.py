@@ -32,9 +32,22 @@ def testNGram(path):
     RunTime = endTime - startTime
     print('Running time: %s Seconds'%(RunTime))
 
+def shell():
+    nGram = NGram()
+    modelPath = 'model/model-1000lines-18443can-2304s.weights'
+    idiomPath = 'dataset/myIdioms.txt'
+    nGram.loadModel(modelPath)
+    nGram.loadIdioms(idiomPath)
+    while True:
+        sentence = input('请输入一句话：')
+        if sentence == 'exit':
+            break
+        print(nGram.predict(splitText(sentence)))
+
 if __name__ == '__main__':
     path = 'dataset/newsdata.txt'
     # testTrie()
     # print(splitText('你好，我是Rick，我来自623424中。过'))
     # print(splitText(readText(path)[0]))
-    testNGram(path)
+    # testNGram(path)
+    shell()
