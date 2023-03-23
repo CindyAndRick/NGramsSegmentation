@@ -42,6 +42,7 @@ def shell():
         sentence = input('请输入一句话：')
         if sentence == 'exit':
             break
+        # nGram.train(splitText(sentence), "one_time", save=False)
         print(nGram.predict(splitText(sentence)))
 
 if __name__ == '__main__':
