@@ -35,7 +35,7 @@ class Trie:
     # res在传入时需要传入空列表，为结果
     def find(self, node, str, res):
         str += node.cur
-        if node.count > 2:
+        if node.count >= 2:
             res.append({"str": str, "count": node.count})
         for child in node.children.values():
             self.find(child, str, res)

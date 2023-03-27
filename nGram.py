@@ -9,7 +9,7 @@ class NGram:
         self.candidates = []
         self.idioms = []
 
-    # type: "n_gram": 原本算法, "one_time": 改进算法
+    # type: "n_grams": 原本算法, "one_time": 改进算法
     def train(self, sentences, type="one_time", save=True):
         print("training with {}".format(type))
         # 获取初次分割
@@ -21,18 +21,21 @@ class NGram:
             windowSize = min(self.n, len(sentence))
 
             # 从句子的第一个字开始，每次向后移动一个字，直到窗口到达句子末尾
-            for i in range(len(sentence) - windowSize + 1):
+            for i in range(len(sentence) - 1):
                 # 将长度大于2的全部插入trie树
-                for j in range(1, windowSize):
-                    self.trie.insert(sentence[i:i+j+1])
+                for j in range(windowSize - 1):
+                    if i + j + 1 < len(sentence):
+                        # print(sentence[i:i + j + 2])
+                        self.trie.insert(sentence[i:i + j + 2])
 
+        # self.trie.print()
         # 获取candidates
         self.trie.find(self.trie, "", self.candidates)
         # 按照长度从大到小排序，长度相同的按照出现次数从大到小排序
         self.candidates = sorted(self.candidates, key=lambda x: (len(x["str"]), x["count"]), reverse=True)
         print("candidates length:", len(self.candidates))
 
-        if type == "n_gram":
+        if type == "n_grams":
             time = 0
             while self.check(sentences):
                 time += 1
@@ -46,8 +49,8 @@ class NGram:
         elif type == "one_time":
             print('pruning candidates')
             self.prune(self.candidates)
-            print('splitting {} sentences'.format(len(sentences)))
-            sentences = self.split(sentences)
+            # print('splitting {} sentences'.format(len(sentences)))
+            # sentences = self.split(sentences)
             print('done')
 
         if save:
@@ -72,7 +75,7 @@ class NGram:
     # 对candidates中的n-gram进行取舍，保留出现次数最多的n-gram
     # 先记录到删除列表，最后再删除，太慢，但直接删除我写不出来
     def prune(self, curCandidates):
-        print("candidates length:", len(curCandidates))
+        # print("candidates length:", len(curCandidates))
         count = 0
         # del_list = []
         del_name = []
@@ -91,7 +94,7 @@ class NGram:
                     else:
                         # del_list.append(j)
                         del_name.append(curCandidates[j])
-        print("{} to delete".format(len(del_name)))
+        # print("{} to delete".format(len(del_name)))
         count = 0
         for name in del_name:
             count += 1
